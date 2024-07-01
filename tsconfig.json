@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+      "target": "ES6",                  // Especifica que el código debe ser compilado a ES6
+      "module": "commonjs",             // Usa el sistema de módulos CommonJS
+      "outDir": "./dist",               // Directorio de salida
+      "rootDir": "./src",               // Directorio raíz de los archivos fuente
+      "moduleResolution": "node",       // Resolución de módulos en estilo Node
+      "esModuleInterop": true,          // Interoperabilidad con módulos ES
+      "forceConsistentCasingInFileNames": true,
+      "skipLibCheck": true,
+      "declaration": true,              // Genera archivos de declaración (.d.ts)
+      "declarationDir": "./dist/types"  // Directorio de salida para archivos de declaración
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules"]
+  }
+  
