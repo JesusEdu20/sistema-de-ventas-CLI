@@ -7,7 +7,9 @@ displayPanel.getPanel = (text) => {
     const panels = {
         box: 'Abrir Caja',
         home: 'volver al menu principal',
-        sale: 'vender'
+        sale: 'vender',
+        state: 'estado',
+        finish: "Finalizar Operaciones"
     };
     for (const panel in panels) {
         if (panels[panel] === text) {
@@ -16,13 +18,34 @@ displayPanel.getPanel = (text) => {
     }
 };
 displayPanel.home = () => {
+    console.clear();
     const menuPrincipal = ['Abrir Caja', 'Finalizar Operaciones', 'estado'];
     const primaryMenuIndex = readlineSync.keyInSelect(menuPrincipal);
     const panel = _a.getPanel(menuPrincipal[primaryMenuIndex]);
     return { panel, primaryMenuIndex };
 };
+displayPanel.finish = () => {
+    return { panel: 'finalizar', index: 1 };
+};
 displayPanel.box = () => {
     const boxMenu = ['vender', 'volver al menu principal'];
+    const index = readlineSync.keyInSelect(boxMenu);
+    const panel = _a.getPanel(boxMenu[index]);
+    return { panel, index };
+};
+displayPanel.state = (ventas) => {
+    console.log("FACTURAS");
+    const totalSalesArray = ventas.map((invoice) => invoice.total);
+    const totalSales = totalSalesArray.reduce((accumulator, currentValue) => {
+        return accumulator + currentValue;
+    }, 0);
+    ventas.forEach(invoice => {
+        console.log("----------------------------------");
+        console.log(`|${invoice.razonSocial}|\nJ-${invoice.rif}\n${invoice.producto}\n${invoice.cantidad}\nC/U${invoice.precioUnidad}\nTOTAL : ${invoice.total}`);
+    });
+    console.log("=========================================");
+    console.log(`Numero de Ventas: ${ventas.length}\nSaldo :${totalSales}`);
+    const boxMenu = ['volver al menu principal'];
     const index = readlineSync.keyInSelect(boxMenu);
     const panel = _a.getPanel(boxMenu[index]);
     return { panel, index };
@@ -38,7 +61,7 @@ displayPanel.sale = (store, ventas) => {
     const indexProduct = readlineSync.keyInSelect(products);
     const product = products[indexProduct];
     //select amount
-    value = readlineSync.question('Coloca la cantidad de unidades');
+    value = readlineSync.question('Coloca la cantidad de unidades: ');
     const productsData = store[product];
     if (value > productsData.priceWholesale.min) {
         //enter sale
@@ -52,7 +75,7 @@ displayPanel.sale = (store, ventas) => {
         };
         ventas.push(invoice);
         //create invoice
-        console.log(`|${invoice.razonSocial}||\nJ-${invoice.rif}|\n${invoice.producto}\n${invoice.cantidad}\nC/U${invoice.precioUnidad}\nTOTAL : ${invoice.total}`);
+        console.log(`|${invoice.razonSocial}|\nJ-${invoice.rif}\n${invoice.producto}\n${invoice.cantidad}\nC/U${invoice.precioUnidad}\nTOTAL : ${invoice.total}`);
         return { panel: 'home', index: 1 };
     }
     else if (value === 0) {
@@ -69,7 +92,7 @@ displayPanel.sale = (store, ventas) => {
     };
     ventas.push(invoice);
     //create invoice
-    console.log(`${invoice.razonSocial}\n ${invoice.rif} \n${invoice.producto}\n${invoice.cantidad}\n${invoice.precioUnidad}\n${invoice.total}`);
+    console.log(`|${invoice.razonSocial}|\nJ-${invoice.rif}\n${invoice.producto}\n${invoice.cantidad}\nC/U${invoice.precioUnidad}\nTOTAL : ${invoice.total}`);
     return { panel: 'home', index: 1 };
 };
 function openBusiness() {
@@ -83,6 +106,9 @@ function openBusiness() {
     while (panel !== 'finalizar') {
         if (panel === 'sale') {
             panel = displayPanel[panel](store, ventas).panel;
+        }
+        else if (panel === 'state') {
+            panel = displayPanel[panel](ventas).panel;
         }
         else {
             panel = displayPanel[panel]().panel;

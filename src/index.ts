@@ -7,7 +7,9 @@ class displayPanel {
         const panels = {
             box : 'Abrir Caja',
             home: 'volver al menu principal',
-            sale : 'vender'
+            sale : 'vender',
+            state: 'estado',
+            finish: "Finalizar Operaciones"
         }
         for (const panel in panels) {
             if(panels[panel] === text){
@@ -16,10 +18,14 @@ class displayPanel {
         }
     }
     static home  = () => {
+        console.clear()
         const menuPrincipal = ['Abrir Caja', 'Finalizar Operaciones', 'estado']
         const primaryMenuIndex = readlineSync.keyInSelect(menuPrincipal)
         const panel = this.getPanel(menuPrincipal[primaryMenuIndex])
         return {panel, primaryMenuIndex}
+    }
+    static finish  = () => {
+        return {panel:'finalizar', index:1}
     }
     static box = () => {
         const boxMenu = ['vender', 'volver al menu principal']
@@ -28,6 +34,24 @@ class displayPanel {
         return {panel, index}
     }
 
+    static state = (ventas) => {
+        console.log("FACTURAS")
+        
+        const totalSalesArray = ventas.map((invoice: { total: number; }) => invoice.total)
+        const totalSales = totalSalesArray.reduce((accumulator:number, currentValue:number) => {
+            return accumulator + currentValue;
+        }, 0);
+        ventas.forEach(invoice => {
+            console.log("----------------------------------")
+            console.log(`|${invoice.razonSocial}|\nJ-${invoice.rif}\n${invoice.producto}\n${invoice.cantidad}\nC/U${invoice.precioUnidad}\nTOTAL : ${invoice.total}`)
+        });
+        console.log("=========================================")
+        console.log(`Numero de Ventas: ${ventas.length}\nSaldo :${totalSales}`)
+        const boxMenu = ['volver al menu principal']
+        const index = readlineSync.keyInSelect(boxMenu)
+        const panel = this.getPanel(boxMenu[index])
+        return {panel, index}
+    }
 
     static sale = (store, ventas) => {
         console.log('indicar datos')
@@ -105,7 +129,12 @@ function openBusiness () {
         if(panel === 'sale'){
             panel = displayPanel[panel](store, ventas).panel
             
-        } else{
+        } 
+        else if(panel === 'state'){
+            panel = displayPanel[panel](ventas).panel
+            
+        } 
+        else{
           
             panel = displayPanel[panel]().panel
            

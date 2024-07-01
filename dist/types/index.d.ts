@@ -5,7 +5,15 @@ declare class displayPanel {
         panel: string;
         primaryMenuIndex: any;
     };
+    static finish: () => {
+        panel: string;
+        index: number;
+    };
     static box: () => {
+        panel: string;
+        index: any;
+    };
+    static state: (ventas: any) => {
         panel: string;
         index: any;
     };
